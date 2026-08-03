@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://nauwimanuel.github.io/img/Logo%20UNIPA.png" type="image/x-icon" />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <style>
+        :root { --ft-blue: #002d5a; --ft-gold: #ffcc00; --ft-dark: #001a35; }
+        body { font-family: 'Montserrat', sans-serif; background-color: #fcfcfc; color: var(--ft-dark); margin: 0; }
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .bg-ft { background-color: var(--ft-blue); }
+        .text-gold { color: var(--ft-gold); }
+
+        /* FIX: Agar tulisan saat diblok tetap kelihatan */
+        #nimInput::selection { background-color: var(--ft-gold); color: var(--ft-blue); }
+
+        .hero-section { background: linear-gradient(180deg, var(--ft-blue) 0%, var(--ft-dark) 100%); position: relative; padding-bottom: 100px; }
+        
+        /* Badge styling */
+        .date-badge { background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 215, 0, 0.3); padding: 8px 20px; border-radius: 50px; display: inline-block; backdrop-filter: blur(5px); }
+    </style>
+</head>
+<body>
+
+    <!-- OVERLAY LOGIN -->
+    <div id="overlay" class="fixed inset-0 flex items-center justify-center p-6 z-[1000] transition-opacity duration-1000 bg-[#002d5a]">
+        <div class="bg-white/95 backdrop-blur-md p-10 rounded-[2.5rem] shadow-2xl w-[90%] max-w-sm text-center animate__animated animate__zoomIn">
+            <img src="https://nauwimanuel.github.io/img/Logo%20UNIPA.png" class="w-16 mx-auto mb-6">
+            <h2 class="text-2xl font-bold text-[#002d5a] mb-1 font-serif">Fakultas Teknik UNIPA</h2>
+            <p class="text-gray-500 text-[10px] mb-6 uppercase tracking-widest font-bold">Masukan NIM untuk membuka undangan</p>
+            <input type="text" id="nimInput" placeholder="MASUKKAN NIM ANDA" class="w-full border-2 border-gray-100 p-4 rounded-2xl mb-4 text-center font-bold text-[#002d5a] focus:border-[#ffcc00] outline-none">
+            <button onclick="prosesLogin()" id="btnBuka" class="bg-[#002d5a] text-white font-bold py-4 rounded-2xl w-full hover:bg-opacity-90 active:scale-95 transition-all">Buka Undangan</button>
+            <p id="errorMsg" class="text-red-500 text-xs mt-4 hidden animate__animated animate__shakeX">NIM tidak ditemukan!</p>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="mainContent" class="hidden">
+        
+        <!-- HERO SECTION -->
+        <section class="hero-section text-white text-center pt-24">
+            <div class="container mx-auto px-6 relative z-10">
+                <p class="uppercase tracking-[0.5em] text-[10px] md:text-xs mb-6 text-yellow-400 font-bold" data-aos="fade-down">Kepada Yth. Orang Tua/Wali Dari</p>
+                <h1 id="view_nama" class="text-4xl md:text-7xl font-serif text-gold mb-6 animate__animated animate__fadeInUp">...</h1>
+                
+                <div class="date-badge mb-4 animate__animated animate__fadeInUp animate__delay-1s">
+                    <p id="view_tanggal_top" class="text-sm font-bold tracking-widest uppercase">...</p>
+                    <p id="view_jam_top" class="text-xs opacity-80">...</p>
+                </div>
+                <p id="view_prodi" class="text-xs md:text-sm italic opacity-60 max-w-md mx-auto" data-aos="fade-up">...</p>
+            </div>
+
+            <!-- PERBAIKAN WAVE -->
+            <div class="absolute bottom-0 left-0 w-full overflow-hidden leading-[0]">
+                <svg viewBox="0 0 1200 120" preserveAspectRatio="none" class="relative block w-[calc(100%+1.3px)] h-[80px]">
+                    <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" fill="#fcfcfc"></path>
+                </svg>
+            </div>
+        </section>
+
+        <!-- UNDANGAN SECTION -->
+        <section class="max-w-3xl mx-auto px-8 py-16 text-center">
+            <div class="mb-10" data-aos="fade-up">
+                <img src="https://nauwimanuel.github.io/img/Logo%20UNIPA.png" class="w-24 mx-auto drop-shadow-lg mb-6">
+                
+                <!-- DINAMIS JUDUL KEGIATAN -->
+                <h3 id="view_kegiatan" class="text-lg md:text-xl font-bold text-gray-700 italic px-4 leading-relaxed">...</h3>
+                
+                <div class="h-1 w-20 bg-yellow-500 mx-auto mt-6 rounded-full"></div>
+            </div>
+
+            <h2 id="view_jabatan" class="text-blue-900 font-serif text-2xl mb-1 uppercase tracking-wider" data-aos="fade-up">...</h2>
+            <h3 id="view_dekan" class="font-bold text-gray-700 mb-8 border-b border-gray-100 pb-4 inline-block" data-aos="fade-up">...</h3>
+            <p id="view_pembuka" class="text-gray-600 leading-relaxed mb-12 text-sm md:text-base italic px-4" data-aos="fade-up">...</p>
+
+            <!-- CARD INFO ACARA -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16" data-aos="flip-up">
+                <!-- TANGGAL (Icon Kalender) -->
+                <div class="bg-blue-50 p-8 rounded-3xl border-b-4 border-blue-900 shadow-sm">
+                    <div class="bg-[#002d5a] text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                    </div>
+                    <h4 class="font-bold text-blue-900 text-lg" id="view_tanggal">...</h4>
+                    <p class="text-sm text-gray-500" id="view_jam">...</p>
+                </div>
+
+                <!-- LOKASI (Icon Marker) -->
+                <div class="bg-yellow-50 p-8 rounded-3xl border-b-4 border-yellow-500 shadow-sm">
+                    <div class="bg-[#ffcc00] text-[#002d5a] w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                    </div>
+                    <h4 class="font-bold text-gray-800 text-lg" id="view_lokasi">...</h4>
+                    <p class="text-sm text-gray-500">Gedung FT UNIPA</p>
+                </div>
+            </div>
+
+            <!-- SUSUNAN ACARA -->
+            <div class="py-10">
+                <h3 class="font-serif text-3xl text-blue-900 mb-10 italic" data-aos="zoom-in">Susunan Acara</h3>
+                <div id="view_acara" class="space-y-4 max-w-md mx-auto"></div>
+            </div>
+        </section>
+
+        <!-- MAPS SECTION -->
+        <section class="bg-gray-50 py-16 px-6">
+            <div class="max-w-4xl mx-auto rounded-[3rem] overflow-hidden shadow-2xl border-[12px] border-white" data-aos="zoom-in">
+                <iframe id="view_map" src="" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+            <p id="view_alamat" class="text-center text-[11px] text-gray-400 mt-8 tracking-widest uppercase px-12">...</p>
+        </section>
+
+        <!-- FOOTER DINAMIS -->
+        <footer class="bg-ft py-12 text-center text-white">
+            <img src="https://nauwimanuel.github.io/img/Logo%20UNIPA.png" class="w-12 mx-auto mb-4 opacity-50 grayscale">
+            <p id="view_footer" class="text-[10px] tracking-[0.4em] uppercase opacity-40">...</p>
+        </footer>
+    </div>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 1000, once: true });
+
+        function prosesLogin() {
+            const nim = document.getElementById('nimInput').value;
+            const btn = document.getElementById('btnBuka');
+            if(!nim) return;
+
+            btn.innerText = "VERIFIKASI...";
+            btn.disabled = true;
+
+            google.script.run.withSuccessHandler(function(data) {
+                if(data.status === "success") {
+                    // Update Konten Dinamis
+                    document.getElementById('view_nama').innerText = data.wisudawan.nama + ", " + data.wisudawan.gelar;
+                    document.getElementById('view_prodi').innerText = "Program Studi " + data.wisudawan.prodi;
+                    document.getElementById('view_kegiatan').innerText = data.config.judul_kegiatan || "";
+                    document.getElementById('view_footer').innerText = data.config.teks_footer || "";
+                    
+                    // Detail Lainnya
+                    document.getElementById('view_tanggal_top').innerText = data.config.tanggal_acara;
+                    document.getElementById('view_jam_top').innerText = data.config.jam_acara;
+                    document.getElementById('view_pembuka').innerText = data.config.teks_pembuka;
+                    document.getElementById('view_dekan').innerText = data.config.nama_dekan;
+                    document.getElementById('view_jabatan').innerText = data.config.jabatan_undang;
+                    document.getElementById('view_tanggal').innerText = data.config.tanggal_acara;
+                    document.getElementById('view_jam').innerText = data.config.jam_acara;
+                    document.getElementById('view_lokasi').innerText = data.config.lokasi_nama;
+                    document.getElementById('view_alamat').innerText = data.config.lokasi_alamat;
+                    document.getElementById('view_map').src = data.config.link_map;
+
+                    // Susunan Acara
+                    document.getElementById('view_acara').innerHTML = data.acara.map((a, i) => `
+                        <div class="flex items-center gap-5 glass bg-slate-200 p-4 rounded-2xl shadow-sm border-l-8 border-blue-900" 
+                             data-aos="fade-left" data-aos-delay="${i * 100}">
+                            <div class="flex-none"><span class="bg-blue-900 text-white text-[10px] font-bold px-3 py-1 rounded-full">${a.jam}</span></div>
+                            <div class="text-left"><p class="text-sm font-semibold text-gray-700">${a.agenda}</p></div>
+                        </div>
+                    `).join('');
+
+                    // Transisi
+                    document.getElementById('overlay').style.opacity = '0';
+                    setTimeout(() => {
+                        document.getElementById('overlay').style.display = 'none';
+                        document.getElementById('mainContent').classList.remove('hidden');
+                        window.scrollTo(0,0);
+                        AOS.refresh();
+                    }, 600);
+                } else {
+                    document.getElementById('errorMsg').classList.remove('hidden');
+                    btn.innerText = "VERIFIKASI";
+                    btn.disabled = false;
+                }
+            }).ambilDataLengkap(nim);
+        }
+
+        window.onload = function() {
+            const params = new URLSearchParams(window.location.search);
+            if(params.get('id')) {
+                document.getElementById('nimInput').value = params.get('id');
+                prosesLogin();
+            }
+        };
+    </script>
+</body>
+</html>
